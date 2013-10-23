@@ -1,0 +1,45 @@
+SELECT DISTINCT A.EMPLID, A.CAMPUS_ID,
+    B.NAME_DISPLAY "NAME",
+    C.ACAD_PROG "COURSE",
+    SUBSTR(C.ACAD_PROG,4,2) "BRANCH",
+    E.NAME "FATHER/MOTHER" ,
+    
+    ( SELECT SUM(G.applied_amt) FROM  PS_ITEM_SF_VW G,PS_stdnt_srch A WHERE  A.EMPLID=G.EMPLID AND G.applied_amt>=0 AND G.account_term like '%301' GROUP BY a.emplid ) AS "COURSE FEE APPLIED",
+   
+    (  SELECT SUM(G.applied_amt) FROM PS_ITEM_SF_VW G,PS_stdnt_srch A WHERE g.EMPLID=A.EMPLID  AND G.account_term like '%301' GROUP BY a.emplid  ) AS "TOTAL FEE PAYABLE"   ,        
+ 
+         ((select sum(g.applied_amt) from PS_ITEM_SF_VW g,PS_stdnt_srch A where g.account_nbr like '%TUITION%' AND G.account_term like '%301' and  a.emplid=g.emplid GROUP BY a.emplid)
+       union
+       (SELECT 0 from PS_ITEM_SF_VW G,PS_stdnt_srch A where G.EMPLID=A.EMPLID AND G.account_term like '%301' AND G.EMPLID 
+       NOT in(select g.emplid from PS_ITEM_SF_VW g where g.account_nbr like '%TUITION%' and a.emplid=g.emplid AND G.account_term like '%301' AND  g.applied_amt>0))) AS "COURSE FEES PAID",
+         
+     ((select g.applied_amt from PS_ITEM_SF_VW g where g.account_nbr like '%BUS%' AND G.account_term like '%301' and a.emplid=g.emplid)
+       union
+       (SELECT 0 from PS_ITEM_SF_VW G where G.EMPLID=A.EMPLID AND G.account_term like '%301' AND G.EMPLID
+       NOT in(select g.emplid from PS_ITEM_SF_VW g where g.account_nbr like '%BUS%' AND G.account_term like '%3%' and a.emplid=g.emplid and g.applied_amt>0))) as "bus fee paid"
+         
+    --  F.ABSENCE_DATE "DUE DATE"
+               
+  FROM PS_stdnt_srch A,
+      PS_HCR_PERSON_NM_I B,
+     PS_ACAD_PROG C,
+     PS_RELATIONSHIPS E,
+--   PS_SRMU_SNTFER_TBL F,
+    PS_ITEM_SF_VW G
+  --  PS_ITEM_LINE_VW H
+--    PS_CSH_OFF_RCPT_VW I,
+--    PS_ACCOUNT_VW J
+    
+    
+  WHERE A.EMPLID=B.EMPLID
+  AND A.EMPLID  =C.EMPLID
+  AND A.EMPLID  =E.EMPLID
+  -- AND A.EMPLID  =F.EMPLID
+  AND A.EMPLID  =G.EMPLID ;
+ -- AND A.EMPLID  =H.EMPLID;
+  -- AND A.EMPLID  =I.EMPLID
+  --  AND A.EMPLID  =J.EMPLID;
+
+
+
+select g.applied_amt from PS_ITEM_SF_VW g where g.account_nbr like '%BUS%' and g.emplid='00000000700' and g.applied_amt>0;
