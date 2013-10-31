@@ -1,0 +1,5 @@
+SELECT * FROM PS_item_sf_vw X WHERE EMPLID='00000000002';
+
+select * from ps_SRMU_CSH_SUM_VW  WHERE date2 between '13-OCT-13' and '17-OCT-13';
+
+SELECT * FROM PS_DEGREE_TBL;

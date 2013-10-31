@@ -1,0 +1,2 @@
+Fit/gap analysis is an important component in the Project life cycle.
+In this phase a study is made to identify whether the present system fits the requirements, and if any such gaps are identified, they are recorded in a prescribed format. It is used for implementing the correct requirement in the project.

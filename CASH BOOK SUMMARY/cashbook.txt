@@ -1,0 +1,32 @@
+SELECT DISTINCT A.last_activity_date AS Date1 
+ , A.EMPLID 
+ , B.NAME 
+ , ( 
+ SELECT SUM(X.ITEM_AMT) 
+  FROM ps_item_sf_vw X 
+ WHERE X.EMPLID =A.EMPLID 
+   AND X.ITEM_AMT > '0' 
+   AND X.last_activity_date=A.last_activity_date ) AS DEPENDENT_EXPENSES, ( 
+ SELECT SUM(Y.total_amount_sf) 
+  FROM PS_CSH_OFF_RECEIPT Y 
+ WHERE Y.EMPLID=A.EMPLID 
+   AND y.trans_dt=A.last_activity_date ) AS PIN_FRML_END_NUM, ( 
+ SELECT SUM(X.item_amt) 
+  FROM PS_item_sf_vw X 
+ WHERE X.last_activity_date=A.last_activity_date 
+   AND X.item_amt>'0') AS BKGNDCOLOR, ( 
+ SELECT SUM(Y.total_amount_sf) 
+  FROM PS_CSH_OFF_RECEIPT Y 
+ WHERE Y.trans_dt=A.last_activity_date) AS BKGNDPOS2LEN, ( 
+ SELECT (( 
+ SELECT SUM(X.item_amt) 
+  FROM PS_item_sf_vw X 
+ WHERE X.last_activity_date=A.last_activity_date 
+   AND X.item_amt>'0')-( 
+ SELECT SUM(Y.total_amount_sf) 
+  FROM PS_CSH_OFF_RECEIPT Y 
+ WHERE Y.trans_dt=A.last_activity_date)) 
+  FROM DUAL) AS HRS_DM_OBJECT_ID 
+  FROM ps_item_sf_vw A, PS_HCR_PER_NAME_I B
+ WHERE A.EMPLID =B.EMPLID
+ AND A.ITEM_EFFECTIVE_DT between '21-OCT-12' and '21-SEP-13';

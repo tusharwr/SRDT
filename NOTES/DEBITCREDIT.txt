@@ -1,0 +1,4 @@
+In double entry bookkeeping, debits and credits (abbreviated Dr and Cr, respectively) are entries made in account ledgers to record changes in value due to business transactions. Generally speaking, the source account for the transaction is credited (an entry is made on the right side of the account's ledger) and the destination account is debited (an entry is made on the left). Each transaction's debit entries must equal its credit entries.[1][2]
+The difference between the total debits and total credits in a single account is the account's balance. If debits exceed credits, the account has a debit balance; if credits exceed debits, the account has a credit balance.[3] For the company as a whole, the totals of debit balances and credit balances must be equal as shown in the trial balance report, otherwise an error has occurred.
+
+
