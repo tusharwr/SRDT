@@ -5,52 +5,40 @@ SELECT emplid, account_term, descr, item_amt, applied_amt, item_term FROM PS_ITE
 WHERE EMPLID='00000000157'; 
 
 select * from ps_srmu_stu_id_vw;
-
-select distinct a.emplid
-,(sum(a.item_amt)-sum(a.applied_amt))
-from ps_item_sf_vw a
-, ps_srmu_stu_id_vw b
-where a.emplid=b.emplid
-and a.account_term='1201' 
-and item_amt>0
-group by a.emplid;
-
-
-
-SELECT DISTINCT A.EMPLID,
-    B.NAME_DISPLAY "NAME",
-    g.acad_year,
-    
-    C.ACAD_PROG,G.ITEM_TERM, 
-    
-    (select distinct d.descr1 from ps_class_roster_vw D   where d.emplid=a.emplid and c.acad_prog=d.acad_prog_primary) AS "DESCRIPTION",
-    
-   (SELECT SUM(H.LINE_AMT) FROM PS_ITEM_LINE_VW H WHERE H.EMPLID=A.EMPLID AND H.LINE_AMT>'0' AND H.LINE_ACTION != 'REF' AND H.ITEM_TERM=G.ITEM_TERM) AS "TOTAL CHARGE", 
-   
-   (SELECT NVL(SUM(G.APPLIED_AMT),0) FROM  PS_ITEM_SF_VW G WHERE a.emplid= g.emplid AND H.item_term=g.item_term ) AS "TOTAL PAID",  
-   
-   ((SELECT SUM(H.LINE_AMT) FROM PS_ITEM_LINE_VW H WHERE H.EMPLID=A.EMPLID AND  H.LINE_AMT>'0' AND H.LINE_ACTION != 'REF' AND H.ITEM_TERM=G.ITEM_TERM)
-   -
-   (SELECT SUM(G.APPLIED_AMT) FROM  PS_ITEM_SF_VW G WHERE a.emplid= g.emplid AND H.ITEM_TERM=G.ITEM_TERM))AS "BALANCE "
-    
-    FROM PS_stdnt_srch A,
-    PS_HCR_PERSON_NM_I B,
-    PS_ACAD_PROG C,
-    PS_ITEM_LINE_VW H, 
-    PS_ITEM_SF_VW G
-    
-    WHERE  A.EMPLID=B.EMPLID AND
-    A.EMPLID=C.EMPLID AND 
-    A.EMPLID=H.emplid AND 
-    H.sel_group !=' ' AND
-    A.EMPLID=G.EMPLID AND
-    G.ITEM_TERM='1301' AND
-    C.ACAD_PROG='MBA01' AND
-    h.item_term=g.item_term and
-    ((SELECT SUM(H.LINE_AMT) FROM PS_ITEM_LINE_VW H WHERE H.EMPLID=A.EMPLID AND  H.LINE_AMT>'0' AND H.LINE_ACTION != 'REF')
-   -
-   (SELECT SUM(g.APPLIED_AMT) FROM  PS_ITEM_SF_VW G WHERE a.emplid= g.emplid))>0 AND
-   G.LAST_ACTIVITY_DATE< CURRENT_DATE;
-    
-    select * from ps_SRMU_BALANCE_VW where acad_prog='MBA01' and item_term='1301';
-   
+--------------------
+  
+  select  sysdate+10 from dual;
+  
+  select * from ps_xl_acad_lvl_vw;
+  select * from ps_stdnt_car_term;
+  
+  select distinct a.emplid,a.acad_year,a.strm,b.descr, b.descrshort from ps_stdnt_car_term a, ps_xl_acad_lvl_vw b
+  where a.acad_level_bot= b.fieldvalue;
+  
+  
+  	
+SELECT DISTINCT 
+A.EMPLID
+, A.ADMIT_TERM
+, A.ACAD_YEAR
+, A.NAME_DISPLAY
+, A.NAME_PREFIX_U
+, A.FATHER_NAME
+, A.CAMPUS_ID
+, B.DUE_AMT
+, B.ITEM_TERM
+, B.SESSION_YEAR
+, (CASE WHEN substr( A.ACAD_PROG,0,3)='BTR' THEN ( A.DEGREE || ' (' || substr( A.ACAD_PROG,4 ,2) || ')') ELSE substr( A.ACAD_PROG,0,3) END) as DEGREE
+, B.DESCR
+, D.FIELDVALUE
+, D.DESCR as desc1
+, D.DESCRSHORT
+  FROM ((PS_SRMU_STU_ID_VW A LEFT OUTER JOIN  PS_SRMU_DUE_AMT B ON  A.EMPLID = B.EMPLID ) LEFT OUTER JOIN  PS_STDNT_CAR_TERM C ON  A.EMPLID = C.EMPLID ), PS_XL_ACAD_LVL_VW D
+  WHERE ( B.ITEM_TERM = C.STRM
+     AND A.ACAD_PROG = C.ACAD_PROG_PRIMARY
+     AND D.EFFDT =
+        (SELECT MAX(D_ED.EFFDT) FROM PS_XL_ACAD_LVL_VW D_ED
+        WHERE D.FIELDVALUE = D_ED.FIELDVALUE
+          AND D_ED.EFFDT <= SYSDATE)
+     AND C.ACAD_LEVEL_BOT = D.FIELDVALUE ) order by a.emplid;
+ 

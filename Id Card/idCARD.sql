@@ -55,3 +55,47 @@ SELECT A.EMPLID, A.ACAD_PROG, A.ADMIT_TERM, B.ACAD_PLAN, C.ACAD_YEAR, D.DESCR, D
         ------------------------------
         select * from ps_relationships;
         SELECT * FROM PS_ACAD_PROG;
+        ---------------------------------------
+        SELECT * FROM ps_srmu_stu_id_vw;
+        -------------------------------
+        
+        SELECT A.EMPLID 
+ , A.ACAD_PROG 
+ , A.ADMIT_TERM 
+ , A.ACAD_PLAN 
+ , A.ACAD_YEAR 
+ , A.DESCR 
+ , A.ACAD_PLAN_TYPE 
+ , A.DEGREE 
+ ,b.name_prefix 
+ , B.NAME_DISPLAY 
+ , B.COUNTRY 
+ ,B.ADDRESS_TYPE
+ , B.ADDRESS1 
+ , B.ADDRESS2 
+ , B.ADDRESS3 
+ , B.ADDRESS4 
+ , B.CITY 
+ , b.phone_type
+ , B.PHONE 
+ , B.BLOOD_TYPE 
+ , B.POSTAL 
+ , C.PEOPLE_RELATION 
+ , c.name_prefix AS NAME_PREFIX_U 
+ , C.NAME AS FATHER_NAME 
+ , D.DESCR AS DESCR1 
+ , D.YEARS_OF_EDUCATN 
+ , B.CAMPUS_ID 
+  FROM (((PS_SRMU_ST_PLAN_VW A LEFT OUTER JOIN PS_SRMU_ST_DATA_VW B ON A.EMPLID = B.EMPLID ) LEFT OUTER JOIN PS_RELATIONSHIPS C ON A.EMPLID = C.EMPLID ) LEFT OUTER JOIN PS_DEGREE_TBL D ON D.DEGREE = A.DEGREE ) 
+ WHERE ( D.EFFDT = ( 
+ SELECT MAX(D_ED.EFFDT) 
+  FROM PS_DEGREE_TBL D_ED 
+ WHERE D.DEGREE = D_ED.DEGREE 
+   AND D_ED.EFFDT <= SYSDATE
+   and a.emplid='00000000689') );
+   
+   
+   select * from ps_srmu_stu_inf_vw;
+   
+   
+  
